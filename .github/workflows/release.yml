@@ -1,0 +1,190 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Validate widget before release
+      run: |
+        echo "Running pre-release validation..."
+        
+        # Validate JSON
+        node -e "
+          const fs = require('fs');
+          const fields = JSON.parse(fs.readFileSync('fields.json', 'utf8'));
+          console.log('✅ fields.json validated -', fields.length, 'fields');
+        "
+        
+        # Validate JavaScript syntax
+        node -c script.js
+        echo "✅ JavaScript syntax validated"
+        
+        # Check file sizes (StreamElements has limits)
+        echo "Checking file sizes..."
+        html_size=$(wc -c < index.html)
+        css_size=$(wc -c < style.css)
+        js_size=$(wc -c < script.js)
+        
+        echo "HTML size: ${html_size} bytes"
+        echo "CSS size: ${css_size} bytes"
+        echo "JavaScript size: ${js_size} bytes"
+        
+        # Warn if files are getting large (StreamElements recommendations)
+        if [ $html_size -gt 50000 ]; then
+          echo "⚠️ HTML file is large (${html_size} bytes) - consider optimization"
+        fi
+        if [ $css_size -gt 100000 ]; then
+          echo "⚠️ CSS file is large (${css_size} bytes) - consider optimization"
+        fi
+        if [ $js_size -gt 200000 ]; then
+          echo "⚠️ JavaScript file is large (${js_size} bytes) - consider optimization"
+        fi
+        
+    - name: Create widget package
+      run: |
+        echo "Creating widget package..."
+        mkdir -p release-package
+        
+        # Copy core widget files
+        cp index.html release-package/
+        cp style.css release-package/
+        cp script.js release-package/
+        cp fields.json release-package/
+        cp README.md release-package/
+        
+        # Copy assets if they exist
+        if [ -d "assets" ]; then
+          cp -r assets release-package/
+        fi
+        
+        # Create installation guide
+        cat > release-package/INSTALLATION.md << 'EOF'
+# StreamElements Widget Installation Guide
+
+## Quick Installation
+
+1. **Open StreamElements Dashboard**
+   - Go to https://streamelements.com/dashboard
+   - Navigate to Overlays → Create/Edit Overlay
+
+2. **Add Custom Widget**
+   - Click "Add Widget" → "Static/Custom" → "Custom Widget"
+
+3. **Copy Widget Files**
+   - **HTML Field**: Copy contents of `index.html`
+   - **CSS Field**: Copy contents of `style.css`
+   - **JavaScript Field**: Copy contents of `script.js`
+   - **Fields Field**: Copy contents of `fields.json`
+
+4. **Configure Widget**
+   - Adjust settings in the widget panel
+   - Customize colors, fonts, and behavior
+   - Set up chat commands
+
+5. **Test Widget**
+   - Use editor mode test buttons
+   - Test chat commands in your stream
+
+## Files Included
+
+- `index.html` - Widget structure
+- `style.css` - Styling and animations
+- `script.js` - Timer logic and StreamElements integration
+- `fields.json` - Configuration options
+- `README.md` - Complete documentation
+- `assets/` - Optional icon files
+
+## Support
+
+For detailed configuration and troubleshooting, see the complete README.md file.
+EOF
+        
+        # Create zip package
+        cd release-package
+        zip -r ../pomodoro-widget-streamelements.zip .
+        cd ..
+        
+        echo "✅ Widget package created: pomodoro-widget-streamelements.zip"
+        
+    - name: Extract version from tag
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+        
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        cat > release_notes.md << EOF
+        # Pomodoro Timer Widget ${{ steps.version.outputs.version }}
+        
+        A beautiful, customizable Pomodoro timer widget for StreamElements overlays.
+        
+        ## 🎯 Features
+        - **Timer Modes**: Pomodoro or Stopwatch functionality
+        - **Chat Commands**: Control timer via StreamElements chat
+        - **Customizable**: 30+ configuration options for colors, fonts, and behavior
+        - **Audio Support**: Custom notification sounds
+        - **Responsive Design**: Works on all screen sizes
+        - **Session Tracking**: Visual progress and session counters
+        
+        ## 📦 Installation
+        1. Download the \`pomodoro-widget-streamelements.zip\` file
+        2. Extract and follow the \`INSTALLATION.md\` guide
+        3. Copy each file's contents to the corresponding StreamElements widget field
+        
+        ## 🔧 Quick Setup
+        - **HTML**: Copy \`index.html\` contents
+        - **CSS**: Copy \`style.css\` contents  
+        - **JavaScript**: Copy \`script.js\` contents
+        - **Fields**: Copy \`fields.json\` contents
+        
+        ## 💬 Default Chat Commands
+        - \`!pomodoro start\` - Start the timer
+        - \`!pomodoro pause\` - Pause the timer
+        - \`!pomodoro reset\` - Reset the timer
+        
+        ## 📚 Documentation
+        See the included \`README.md\` for complete configuration options and troubleshooting.
+        
+        ---
+        
+        **Compatible with**: StreamElements Custom Widgets  
+        **Tested on**: Chrome, Firefox, Safari, Edge
+        EOF
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: Pomodoro Widget ${{ steps.version.outputs.version }}
+        body_path: release_notes.md
+        files: |
+          pomodoro-widget-streamelements.zip
+          README.md
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Update latest release info
+      run: |
+        echo "🎉 Release ${{ steps.version.outputs.version }} created successfully!"
+        echo "📦 Package: pomodoro-widget-streamelements.zip"
+        echo "📖 Installation guide included"
+        echo "🔗 Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
