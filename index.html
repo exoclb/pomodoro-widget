@@ -1,0 +1,66 @@
+<link href="https://fonts.googleapis.com/css2?family={{fontFamily}}:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<div class="pomodoro-widget">
+  <!-- Decorative Icons -->
+  <div class="decorative-icons">
+    <div class="icon star">⭐</div>
+    <div class="icon cross">✕</div>
+    <div class="icon emoji">😊</div>
+  </div>
+  
+  <!-- Session Counter Toggle -->
+  <div class="session-toggle" id="session-toggle">
+    <div class="toggle-switch">
+      <span class="session-counter">
+        <span id="current-session">2</span>/<span id="total-sessions">{{totalSessions}}</span>
+      </span>
+    </div>
+  </div>
+  
+  <!-- Main Timer Display -->
+  <div class="timer-container">
+    <div class="timer-display" id="timer-display">
+      <span id="timer-minutes">25</span>:<span id="timer-seconds">00</span>
+    </div>
+    
+    <!-- Title Display -->
+    <div class="timer-title" id="timer-title">
+      <span id="timer-state">{{workTitle}}</span>
+    </div>
+  </div>
+  
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+  
+  <!-- Heart Icon -->
+  <div class="heart-icon">💖</div>
+  
+  <!-- Control Buttons (Hidden by default, shown in editor mode) -->
+  <div class="control-buttons" id="control-buttons">
+    <button id="start-btn" class="control-btn">Start</button>
+    <button id="pause-btn" class="control-btn">Pause</button>
+    <button id="reset-btn" class="control-btn">Reset</button>
+  </div>
+  
+  <!-- Test Widget Button -->
+  <div class="test-controls" id="test-controls">
+    <button id="test-work-complete" class="test-btn">Test Work Complete</button>
+    <button id="test-break-complete" class="test-btn">Test Break Complete</button>
+    <button id="test-session-change" class="test-btn">Test Session Change</button>
+  </div>
+</div>
+
+<!-- Audio Elements -->
+<audio id="work-complete-audio" preload="auto">
+  <source src="{{workCompleteSound}}" type="audio/mpeg">
+</audio>
+<audio id="break-complete-audio" preload="auto">
+  <source src="{{breakCompleteSound}}" type="audio/mpeg">
+</audio>
+<audio id="tick-audio" preload="auto">
+  <source src="{{tickSound}}" type="audio/mpeg">
+</audio>

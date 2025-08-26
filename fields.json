@@ -1,0 +1,203 @@
+{
+  "timerMode": {
+    "type": "dropdown",
+    "label": "Timer Mode:",
+    "value": "pomodoro",
+    "options": {
+      "pomodoro": "Pomodoro",
+      "stopwatch": "Stopwatch"
+    }
+  },
+  "timerScale": {
+    "type": "slider",
+    "label": "Timer Scale/Size:",
+    "value": 100,
+    "min": 50,
+    "max": 200,
+    "step": 10
+  },
+  "workDuration": {
+    "type": "number",
+    "label": "Work Timer Duration (minutes):",
+    "value": 25,
+    "min": 1,
+    "max": 59,
+    "step": 1
+  },
+  "shortBreakDuration": {
+    "type": "number",
+    "label": "Short Break Duration (minutes):",
+    "value": 5,
+    "min": 1,
+    "max": 59,
+    "step": 1
+  },
+  "longBreakDuration": {
+    "type": "number",
+    "label": "Long Break Duration (minutes):",
+    "value": 15,
+    "min": 1,
+    "max": 59,
+    "step": 1
+  },
+  "totalSessions": {
+    "type": "number",
+    "label": "Number of Sessions:",
+    "value": 6,
+    "min": 1,
+    "max": 20,
+    "step": 1
+  },
+  "sessionsForLongBreak": {
+    "type": "number",
+    "label": "Sessions Needed for Long Break:",
+    "value": 4,
+    "min": 1,
+    "max": 10,
+    "step": 1
+  },
+  "showTitles": {
+    "type": "checkbox",
+    "label": "Show Titles",
+    "value": true
+  },
+  "showSessionBox": {
+    "type": "checkbox",
+    "label": "Show Session Box",
+    "value": true
+  },
+  "showCountdown": {
+    "type": "checkbox",
+    "label": "Show Countdown",
+    "value": true
+  },
+  "workTitle": {
+    "type": "text",
+    "label": "Work Title:",
+    "value": "FOCUS"
+  },
+  "shortBreakTitle": {
+    "type": "text",
+    "label": "Short Break Title:",
+    "value": "SHORT BREAK"
+  },
+  "longBreakTitle": {
+    "type": "text",
+    "label": "Long Break Title:",
+    "value": "LONG BREAK"
+  },
+  "startCommand": {
+    "type": "text",
+    "label": "Start Command Name:",
+    "value": "!pomodoro start"
+  },
+  "pauseCommand": {
+    "type": "text",
+    "label": "Pause Command Name:",
+    "value": "!pomodoro pause"
+  },
+  "resetCommand": {
+    "type": "text",
+    "label": "Reset Command Name:",
+    "value": "!pomodoro reset"
+  },
+  "cardBackgroundColor": {
+    "type": "colorpicker",
+    "label": "Card Background Color:",
+    "value": "#FFF8DC"
+  },
+  "timerTextColor": {
+    "type": "colorpicker",
+    "label": "Timer Text Color:",
+    "value": "#333333"
+  },
+  "titleTextColor": {
+    "type": "colorpicker",
+    "label": "Title Text Color:",
+    "value": "#666666"
+  },
+  "sessionBoxColor": {
+    "type": "colorpicker",
+    "label": "Session Box Color:",
+    "value": "#4CAF50"
+  },
+  "sessionTextColor": {
+    "type": "colorpicker",
+    "label": "Session Text Color:",
+    "value": "#FFFFFF"
+  },
+  "progressBarColor": {
+    "type": "colorpicker",
+    "label": "Progress Bar Color:",
+    "value": "#4CAF50"
+  },
+  "progressBarBackground": {
+    "type": "colorpicker",
+    "label": "Progress Bar Background:",
+    "value": "#E0E0E0"
+  },
+  "iconColor": {
+    "type": "colorpicker",
+    "label": "Icon Color:",
+    "value": "#FF6B6B"
+  },
+  "fontFamily": {
+    "type": "googleFont",
+    "label": "Font Family:",
+    "value": "Montserrat"
+  },
+  "timerFontSize": {
+    "type": "slider",
+    "label": "Timer Font Size:",
+    "value": 32,
+    "min": 16,
+    "max": 64,
+    "step": 2
+  },
+  "titleFontSize": {
+    "type": "slider",
+    "label": "Title Font Size:",
+    "value": 14,
+    "min": 10,
+    "max": 24,
+    "step": 1
+  },
+  "fontWeight": {
+    "type": "dropdown",
+    "label": "Font Weight:",
+    "value": "600",
+    "options": {
+      "300": "Light",
+      "400": "Normal",
+      "500": "Medium",
+      "600": "Semi-Bold",
+      "700": "Bold",
+      "800": "Extra Bold"
+    }
+  },
+  "enableSound": {
+    "type": "checkbox",
+    "label": "Enable Sound",
+    "value": true
+  },
+  "workCompleteSound": {
+    "type": "sound-input",
+    "label": "Work Complete Sound"
+  },
+  "breakCompleteSound": {
+    "type": "sound-input",
+    "label": "Break Complete Sound"
+  },
+  "tickSound": {
+    "type": "sound-input",
+    "label": "Tick Sound (Optional)"
+  },
+  "widgetName": {
+    "type": "hidden",
+    "value": "Pomodoro Timer Widget"
+  },
+  "widgetDuration": {
+    "type": "hidden",
+    "value": 0
+  }
+}
