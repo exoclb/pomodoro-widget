@@ -136,6 +136,21 @@
     "label": "Progress Bar Background:",
     "value": "#E0E0E0"
   },
+  "decorativeIcon1": {
+    "type": "text",
+    "label": "Decorative Icon 1:",
+    "value": "⭐"
+  },
+  "decorativeIcon2": {
+    "type": "text",
+    "label": "Decorative Icon 2:",
+    "value": "✕"
+  },
+  "decorativeIcon3": {
+    "type": "text",
+    "label": "Decorative Icon 3:",
+    "value": "😊"
+  },
   "iconColor": {
     "type": "colorpicker",
     "label": "Icon Color:",

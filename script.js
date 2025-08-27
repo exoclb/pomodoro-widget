@@ -191,6 +191,10 @@ function startTimer() {
   
   // Update display
   document.querySelector('.pomodoro-widget').classList.remove('timer-paused');
+  
+  // Save state immediately when timer starts
+  saveTimerState();
+  
   console.log(`Timer started: ${timerState.mode} mode`);
 }
 
@@ -202,6 +206,10 @@ function pauseTimer() {
     
     // Update display
     document.querySelector('.pomodoro-widget').classList.add('timer-paused');
+    
+    // Save state immediately when timer is paused
+    saveTimerState();
+    
     console.log('Timer paused');
   }
 }
@@ -231,6 +239,9 @@ function resetTimer() {
   document.querySelector('.pomodoro-widget').classList.remove('timer-paused');
   updateDisplay();
   updateProgressBar();
+  
+  // Save state immediately when timer is reset
+  saveTimerState();
   
   console.log('Timer reset');
 }
@@ -333,6 +344,9 @@ function switchToMode(newMode) {
       // Update display after class changes are applied
       updateDisplay();
       updateProgressBar();
+      
+      // Save state immediately when mode switches
+      saveTimerState();
     });
   });
 }
@@ -426,13 +440,19 @@ window.addEventListener('onEventReceived', function (obj) {
 
 // Store timer state in StreamElements storage
 function saveTimerState() {
-  SE_API.store.set('pomodoroTimer', {
+  const stateData = {
     currentSession: timerState.currentSession,
     mode: timerState.mode,
     remainingTime: timerState.remainingTime,
     isRunning: timerState.isRunning,
     isPaused: timerState.isPaused,
     timestamp: Date.now()
+  };
+  
+  SE_API.store.set('pomodoroTimer', stateData).then(() => {
+    console.log('Timer state saved successfully');
+  }).catch(error => {
+    console.error('Failed to save timer state:', error);
   });
 }
 
@@ -444,7 +464,7 @@ function loadTimerState() {
       
       timerState.currentSession = data.currentSession || 1;
       timerState.mode = data.mode || 'work';
-      timerState.isRunning = data.isRunning || false;
+      timerState.isRunning = false; // Always start as stopped after refresh
       timerState.isPaused = data.isPaused || false;
       
       // Set the correct duration and title for the restored mode
@@ -469,15 +489,30 @@ function loadTimerState() {
       widget.classList.add(`timer-${timerState.mode.replace('Break', '-break')}`);
       
       if (data.isRunning && !data.isPaused) {
-        // Continue timer from where it left off
+        // Calculate remaining time accounting for time passed during refresh
         timerState.remainingTime = Math.max(0, data.remainingTime - timeDiff);
+        
         if (timerState.remainingTime > 0) {
-          startTimer();
+          // Timer was running, restore the remaining time but don't auto-start
+          // User needs to manually resume the timer after refresh
+          timerState.isPaused = true;
+          document.querySelector('.pomodoro-widget').classList.add('timer-paused');
+          console.log(`Timer was running, paused at ${Math.floor(timerState.remainingTime / 60)}:${(timerState.remainingTime % 60).toString().padStart(2, '0')} remaining`);
         } else {
-          timerComplete();
+          // Timer would have completed during the refresh
+          timerState.remainingTime = 0;
+          console.log('Timer completed during refresh');
         }
+      } else if (data.isPaused) {
+        // Timer was paused, restore exact remaining time
+        timerState.remainingTime = data.remainingTime;
+        timerState.isPaused = true;
+        document.querySelector('.pomodoro-widget').classList.add('timer-paused');
+        console.log(`Timer was paused, restored with ${Math.floor(timerState.remainingTime / 60)}:${(timerState.remainingTime % 60).toString().padStart(2, '0')} remaining`);
       } else {
+        // Timer was stopped, restore remaining time
         timerState.remainingTime = data.remainingTime || timerState.totalTime;
+        console.log(`Timer was stopped, restored in ${timerState.mode} mode`);
       }
       
       updateDisplay();
@@ -485,9 +520,11 @@ function loadTimerState() {
       updateProgressBar();
       
       console.log(`Timer state restored: ${timerState.mode} mode, session ${timerState.currentSession}`);
+    } else {
+      console.log('No saved timer state found, starting fresh');
     }
   }).catch(e => {
-    console.log('No saved timer state found');
+    console.log('No saved timer state found or error loading:', e);
   });
 }
 
